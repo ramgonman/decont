@@ -4,6 +4,22 @@ echo "Downloading small-RNA samples ..."
 echo
 wget -i data/urls -P data
 
+for var0 in data/*.fastq.gz
+do
+   md5sum $var0 >> md5checks.txt
+done
+for var1 in $(cat data/md5urls)
+do
+   curl -s $var1 | cut -d" " -f1 >> md5curl.txt
+done
+cat md5checks.txt | cut -d" " -f1 > md5chekcut.txt
+diff md5curl.txt md5chekcut.txt
+exitstatusdiff=$(echo $?)
+if [ $exitstatusdiff -ne 0 ] 
+then
+   echo "Warning: MD5 checks of fastq files failed ..."
+fi 
+
 #for url in $(cat data/urls) #TODO
 #do
 #    bash scripts/download.sh $url data
@@ -15,6 +31,15 @@ echo "Downloading the contaminants fasta file ..."
 echo
 bash scripts/download.sh "https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz" res yes "small nuclear" #TODO
 echo
+md5sum res/contaminants.fasta.gz | cut -d" " -f1 > md5db.txt
+curl -s "https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz.md5" | cut -d" " -f1 > md5curldb.txt
+diff md5db.txt md5curldb.txt
+exitdiff=$(echo $?)
+if [ $exitdiff -ne 0 ]
+then
+   echo "Warning: MD5 checks of contaminants.fasta.gz failed ..."
+fi
+
 # Index the contaminants file
 bash scripts/index.sh res/contaminants_filtered.fasta res/contaminants_idx
 
