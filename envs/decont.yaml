@@ -1,0 +1,15 @@
+name: decontam
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - fastqc
+  - star
+  - cutadapt
+  - multiqc
+  - seqkit
+  - ca-certificates
+  - certifi
+  - openssl
+prefix: /home/vant/mambaforge/envs/decontam
